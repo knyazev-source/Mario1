@@ -1,5 +1,5 @@
 from pygame import *
-q = 1
+
 class Game(sprite.Sprite):
     def __init__(self, imag, x, y, speed):
         super().__init__()
@@ -48,12 +48,24 @@ run = True
 acl = 0
 a = 0
 q=0
+i = False
+
+
+
+mixer.init()
+mixer.music.load('saundtrek.mp3')
+#mixer.music.play()
+jump = mixer.Sound('jump.mp3')
+money = mixer.Sound('money.mp3')
+over = mixer.Sound('over.mp3')
+gamo = mixer.Sound('gamo.mp3')
 
 earth = Wall(0,450,700,50)
 plat1 = Wall(600,130,100,30)
 plat2 = Wall(400,300,100,30)
 plat3 = Wall(0,666,100,30)
-player = Player('Mario.png',20,401,3)
+player = Player('Mario.png',20,390,3)
+prev_rect = player.rect.copy()
 
 while run:
     window.blit(background,(0,0))
@@ -62,10 +74,57 @@ while run:
         if e.type == QUIT:
             run = False
         if e.type == KEYDOWN and keys[K_UP]:
-            if sprite.collide_rect(player, earth) or sprite.collide_rect(player, plat1) or sprite.collide_rect(player, plat2) or sprite.collide_rect(player, plat3):
+            print(0)
+            #когда нажимаю кнопку прышка напишет 0
+            if i:
                 player.rect.y-=10
                 acl = -4.8
-            
+
+
+
+    player.speed = 3
+    if sprite.collide_rect(player, earth):
+        if prev_rect.bottom <= earth.rect.top:
+            player.rect.bottom = earth.rect.top
+            i = True
+            player.speed = 4
+            acl = 0 # ускорение
+            a = 0 # счетчик
+        #i = True   Возможный вариант решения проблемы - при прикосновении с любой стороны, но можно будет отпрыгивать от стен(не совсем минус)
+    '''if sprite.collide_rect(player, plat1) or sprite.collide_rect(player, plat2) or sprite.collide_rect(player, plat3):
+        if (acl < 0 or acl > 0) and (player.rect.y < plat1.rect.y or player.rect.y < plat2.rect.y or player.rect.y < plat3.rect.y):
+            player.rect.y+=20
+        print(player.rect.x)
+        print(player.rect.y)
+        player.speed = 3
+        acl = 0
+        a = 0'''
+
+# Проверка коллайда с синим квадратом
+    if player.rect.colliderect(plat2.rect):
+        # Определяем, с какой стороны произошло столкновение
+        if prev_rect.right <= plat2.rect.left:
+            # столкновение справа
+            player.rect.right = plat2.rect.left
+        elif prev_rect.left >= plat2.rect.right:
+            # столкновение слева
+            player.rect.left = plat2.rect.right
+        elif prev_rect.top >= plat2.rect.bottom:
+            # столкновение снизу
+            player.rect.top = plat2.rect.bottom
+            acl = 0
+        elif prev_rect.bottom <= plat2.rect.top:
+            # столкновение сверху
+            player.rect.bottom = plat2.rect.top
+            i = True
+            player.speed = 4
+            acl = 0 # ускорение
+            a = 0 # счетчик
+
+
+
+
+    prev_rect = player.rect.copy()
 
     earth.reset()
     plat1.reset()
@@ -74,27 +133,21 @@ while run:
     player.reset()
     player.move()
 
-    player.speed = 3
-    if sprite.collide_rect(player, earth):
-        player.speed = 3
-        acl = 0
-        a = 0
-    if sprite.collide_rect(player, plat1) or sprite.collide_rect(player, plat2) or sprite.collide_rect(player, plat3):
-        if acl < 0 or acl > 0:
-            player.rect.y+=80
-        player.speed = 3
-        acl = 0
-        a = 0
+
 
 
     a+=1
     if a>=3:
+        i = False
         player.rect.y+=acl
         acl += 0.07
         player.q = 0
     
 
-    
 
     clock.tick(60)
     display.update()
+
+
+#При нажатии на прыжок не всегда он происходит
+#То есть проблема всего скорее в i
