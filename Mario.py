@@ -4,7 +4,7 @@ from random import choice
 class Game(sprite.Sprite):
     '''Главный класс с основными параметрами'''
     def __init__(self, imag, x, y, speed):
-        self.image = transform.scale(image.load(imag),(50,50))
+        self.image = transform.scale(image.load(imag),(40,50))
         super().__init__()
         self.rect = self.image.get_rect()
         self.rect.x = int(x)
@@ -199,10 +199,10 @@ coin = Coin()
 coin.loct()
 coin.location.append('45-310')
 
-player = Player('Mario.png',30,299,4)
+player = Player('Mario_r.png',30,299,4)
 door = Exit(-100,-100)
 mn1 = Monster('m1_1.png', 315, 415, 2, 35, 630)
-mn2 = Monster('Monster.png', 455, 80, 2, 135, 640)
+mn2 = Monster('m1_1.png', 455, 80, 2, 135, 640)
 
 from time import time
 start_time = time()
@@ -232,12 +232,12 @@ while run:
     player.move(platforms)
     player.reset()
     
+    coin.reset()
+
     mn1.move()
     mn1.reset()
     mn2.move()
     mn2.reset()
-
-    coin.reset()
 
     if player.rect.colliderect(mn1.rect) or player.rect.colliderect(mn2.rect):
         mixer.music.stop()
@@ -264,7 +264,9 @@ while run:
         
         
         counter = 0
-        
+    if counter == 29 or counter == 59:
+        pc
+
 
     clock.tick(60)
     display.update()
@@ -278,3 +280,4 @@ while run:
             run = False
     clock.tick(180)
     display.update()'''
+    
